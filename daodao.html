@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript基础知识练习</title>
+    <style>
+        body {
+            font-family: "Microsoft Yahei", sans-serif;
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        .section {
+            margin: 25px 0;
+            padding: 15px;
+            border-left: 4px solid #3498db;
+            background: #f8f9fa;
+        }
+        h2 {
+            color: #3498db;
+            margin-top: 0;
+        }
+        pre {
+            background: #282c34;
+            color: #abb2bf;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #2980b9;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e8f4f8;
+            border-radius: 4px;
+            min-height: 50px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>JavaScript 基础知识练习</h1>
+
+        <!-- 1. 变量定义与类型 -->
+        <div class="section">
+            <h2>1. 变量定义与数据类型</h2>
+            <pre>
+// 变量定义（var/let/const）
+let userName = "张三"; // 字符串类型
+const age = 20;        // 数字类型（常量，不可修改）
+var isStudent = true;  // 布尔类型
+let hobby = ["编程", "阅读", "运动"]; // 数组类型
+let info = {            // 对象类型
+    name: userName,
+    age: age,
+    isStudent: isStudent
+};
+
+// 打印变量类型
+console.log("userName 类型:", typeof userName);
+console.log("age 类型:", typeof age);
+console.log("isStudent 类型:", typeof isStudent);
+console.log("hobby 类型:", typeof hobby); // 数组typeof返回"object"
+console.log("info 类型:", typeof info);
+            </pre>
+        </div>
+
+        <!-- 2. 表达式 -->
+        <div class="section">
+            <h2>2. 表达式运算</h2>
+            <pre>
+// 算术表达式
+let a = 10, b = 3;
+let sum = a + b;
+let sub = a - b;
+let mul = a * b;
+let div = a / b;
+let mod = a % b; // 取余
+
+// 比较表达式
+let isGreater = a > b;
+let isEqual = a === b;
+
+// 逻辑表达式
+let logicResult = (a > 5) && (b < 5);
+
+console.log("算术运算结果：", sum, sub, mul, div, mod);
+console.log("比较运算结果：", isGreater, isEqual);
+console.log("逻辑运算结果：", logicResult);
+            </pre>
+        </div>
+
+        <!-- 3. 流程控制 -->
+        <div class="section">
+            <h2>3. 流程控制语句</h2>
+            <pre>
+// 条件判断：if-else
+let score = 85;
+if (score >= 90) {
+    console.log("成绩优秀");
+} else if (score >= 80) {
+    console.log("成绩良好");
+} else if (score >= 60) {
+    console.log("成绩及格");
+} else {
+    console.log("成绩不及格");
+}
+
+// 循环语句：for循环
+console.log("for循环打印1-5：");
+for (let i = 1; i <= 5; i++) {
+    console.log(i);
+}
+
+// 循环语句：while循环
+console.log("while循环打印1-3：");
+let j = 1;
+while (j <= 3) {
+    console.log(j);
+    j++;
+}
+
+// 多分支：switch
+let day = 3;
+switch (day) {
+    case 1: console.log("星期一"); break;
+    case 2: console.log("星期二"); break;
+    case 3: console.log("星期三"); break;
+    default: console.log("其他日期");
+}
+            </pre>
+        </div>
+
+        <!-- 4. 函数 -->
+        <div class="section">
+            <h2>4. 函数定义与调用</h2>
+            <pre>
+// 普通函数
+function add(num1, num2) {
+    return num1 + num2;
+}
+
+// 箭头函数（ES6+）
+const multiply = (num1, num2) => num1 * num2;
+
+// 带默认参数的函数
+function greet(name = "访客") {
+    return `你好，${name}！`;
+}
+
+// 调用函数
+console.log("add(5, 8) =", add(5, 8));
+console.log("multiply(4, 6) =", multiply(4, 6));
+console.log(greet("小明"));
+console.log(greet()); // 使用默认参数
+            </pre>
+        </div>
+
+        <button onclick="runJSExample()">运行JS代码，查看控制台输出</button>
+        <div id="result">
+            请点击上方按钮，然后按 F12 打开浏览器开发者工具，在「Console/控制台」查看完整运行结果
+        </div>
+    </div>
+
+    <script>
+        // 完整JS练习代码（点击按钮执行）
+        function runJSExample() {
+            console.log("===== JavaScript 基础知识练习开始 =====");
+
+            // ========== 1. 变量定义与数据类型 ==========
+            console.log("\n【1. 变量定义与数据类型】");
+            let userName = "张三";
+            const age = 20;
+            var isStudent = true;
+            let hobby = ["编程", "阅读", "运动"];
+            let info = {
+                name: userName,
+                age: age,
+                isStudent: isStudent
+            };
+
+            console.log("userName 类型:", typeof userName, "值:", userName);
+            console.log("age 类型:", typeof age, "值:", age);
+            console.log("isStudent 类型:", typeof isStudent, "值:", isStudent);
+            console.log("hobby 类型:", typeof hobby, "值:", hobby);
+            console.log("info 类型:", typeof info, "值:", info);
+
+            // ========== 2. 表达式运算 ==========
+            console.log("\n【2. 表达式运算】");
+            let a = 10, b = 3;
+            let sum = a + b;
+            let sub = a - b;
+            let mul = a * b;
+            let div = a / b;
+            let mod = a % b;
+
+            let isGreater = a > b;
+            let isEqual = a === b;
+            let logicResult = (a > 5) && (b < 5);
+
+            console.log("算术运算：10+3=", sum, " 10-3=", sub, " 10*3=", mul, " 10/3=", div.toFixed(2), " 10%3=", mod);
+            console.log("比较运算：10>3=", isGreater, " 10===3=", isEqual);
+            console.log("逻辑运算：(10>5)&&(3<5)=", logicResult);
+
+            // ========== 3. 流程控制 ==========
+            console.log("\n【3. 流程控制语句】");
+            // if-else
+            let score = 85;
+            if (score >= 90) {
+                console.log("if-else：成绩优秀");
+            } else if (score >= 80) {
+                console.log("if-else：成绩良好");
+            } else if (score >= 60) {
+                console.log("if-else：成绩及格");
+            } else {
+                console.log("if-else：成绩不及格");
+            }
+
+            // for循环
+            console.log("for循环打印1-5：");
+            for (let i = 1; i <= 5; i++) {
+                console.log(i);
+            }
+
+            // while循环
+            console.log("while循环打印1-3：");
+            let j = 1;
+            while (j <= 3) {
+                console.log(j);
+                j++;
+            }
+
+            // switch
+            let day = 3;
+            switch (day) {
+                case 1: console.log("switch：星期一"); break;
+                case 2: console.log("switch：星期二"); break;
+                case 3: console.log("switch：星期三"); break;
+                default: console.log("switch：其他日期");
+            }
+
+            // ========== 4. 函数 ==========
+            console.log("\n【4. 函数定义与调用】");
+            // 普通函数
+            function add(num1, num2) {
+                return num1 + num2;
+            }
+            // 箭头函数
+            const multiply = (num1, num2) => num1 * num2;
+            // 默认参数函数
+            function greet(name = "访客") {
+                return `你好，${name}！`;
+            }
+
+            console.log("add(5, 8) =", add(5, 8));
+            console.log("multiply(4, 6) =", multiply(4, 6));
+            console.log("greet('小明') =", greet("小明"));
+            console.log("greet() =", greet());
+
+            console.log("\n===== JavaScript 基础知识练习结束 =====");
+
+            // 页面提示
+            document.getElementById("result").innerHTML = "✅ 代码已运行！请按 F12 打开浏览器开发者工具，在「Console/控制台」查看完整输出结果";
+        }
+    </script>
+</body>
+</html>
