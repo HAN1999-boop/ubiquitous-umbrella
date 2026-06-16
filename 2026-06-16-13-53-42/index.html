@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
+<title>痔疮大专家 - 温和科普·科学护理</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      fontFamily: {
+        title: ['Montserrat', 'sans-serif'],
+        body: ['"Noto Sans SC"', '"Noto Sans"', 'sans-serif'],
+      },
+      colors: {
+        primary: '#0891B2',
+        'primary-light': '#22D3EE',
+        'primary-bg': '#F0FDFA',
+        'primary-badge': '#CCFBF1',
+        'text-dark': '#134E4A',
+        'text-gray': '#64748B',
+        'text-light': '#94A3B8',
+        success: '#16A34A',
+        danger: '#DC2626',
+        'danger-bg': '#FEF2F2',
+        orange: '#EA580C',
+        'orange-bg': '#FFF7ED',
+        'card-bg': '#F8FAFC',
+        'footer-dark': '#134E4A',
+        'footer-border': '#1E5E5A',
+      }
+    }
+  }
+}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Noto+Sans+SC:wght@400;500;600&family=Noto+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  body {
+    -webkit-font-smoothing: antialiased;
+    background: #F0FDFA;
+    overscroll-behavior-y: contain;
+    overflow-x: hidden;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+  #page {
+    max-width: 420px;
+    margin: 0 auto;
+    box-shadow: 0 0 40px rgba(3, 105, 161, 0.08);
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding-bottom: 72px; /* bottom nav space */
+    padding-left: env(safe-area-inset-left, 0px);
+    padding-right: env(safe-area-inset-right, 0px);
+  }
+  .symptom-card { transition: all 0.2s ease; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+  .symptom-card:active { transform: scale(0.98); }
+  .symptom-card.selected { border-color: #0891B2; background: #F0FDFA; }
+  .symptom-card.selected .check-box { background: #0891B2; border-color: #0891B2; }
+  .check-box { transition: all 0.2s ease; }
+  .tab-btn { transition: all 0.2s ease; cursor: pointer; white-space: nowrap; flex-shrink: 0; }
+  .tab-btn.active { background: #0891B2; color: #fff; font-weight: 600; }
+  .btn-press { transition: transform 0.1s ease, box-shadow 0.1s ease; cursor: pointer; }
+  .btn-press:active { transform: scale(0.97); }
+  .fade-in { animation: fadeIn 0.4s ease forwards; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+  .pulse-anim { animation: pulse 2s ease-in-out infinite; }
+  @keyframes slideDown { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 800px; } }
+  .slide-down { animation: slideDown 0.4s ease forwards; overflow: hidden; }
+  @keyframes bounceIn { 0% { opacity: 0; transform: scale(0.3); } 50% { transform: scale(1.05); } 70% { transform: scale(0.9); } 100% { opacity: 1; transform: scale(1); } }
+  .bounce-in { animation: bounceIn 0.6s ease forwards; }
+  .care-detail { max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.4s ease; }
+  .care-detail.open { max-height: 500px; padding-top: 12px; }
+  .quiz-option { transition: all 0.2s ease; cursor: pointer; min-height: 44px; display: flex; align-items: center; }
+  .quiz-option:active { transform: scale(0.97); }
+  .quiz-option.correct { background: #DCFCE7; border-color: #16A34A; }
+  .quiz-option.wrong { background: #FEF2F2; border-color: #DC2626; }
+  .anatomy-zone { transition: all 0.25s ease; cursor: pointer; min-height: 72px; }
+  .anatomy-zone:hover, .anatomy-zone:active { transform: scale(1.03); filter: brightness(1.05); }
+  .anatomy-zone.active { filter: brightness(1.1); box-shadow: 0 0 0 3px #0891B2; }
+  .emoji-btn { transition: all 0.2s ease; cursor: pointer; min-width: 44px; min-height: 44px; display: flex; align-items: center; justify-content: center; }
+  .emoji-btn:active { transform: scale(1.3); }
+  .emoji-btn.selected-emoji { transform: scale(1.3); filter: drop-shadow(0 2px 4px rgba(8,145,178,0.3)); }
+  .timer-display { font-variant-numeric: tabular-nums; }
+  @media (max-width: 420px) { #page { max-width: 100%; box-shadow: none; } }
+  /* Tablet and desktop: centered with shadow */
+  @media (min-width: 421px) {
+    #page { border-radius: 12px; margin-top: 16px; margin-bottom: 16px; }
+  }
+  /* Small phone fixes (320-360px) */
+  @media (max-width: 360px) {
+    .symptom-card { padding: 12px 14px; gap: 10px; }
+    .symptom-card .check-box { width: 22px; height: 22px; }
+  }
+  .nav-dot { transition: all 0.2s ease; cursor: pointer; }
+  .nav-dot.active-dot { background: #0891B2; width: 24px; border-radius: 999px; }
+  /* Images */
+  .hero-img { width: 100%; max-width: 340px; height: auto; border-radius: 20px; aspect-ratio: 1/1; object-fit: cover; }
+  .section-img { width: 100%; max-width: 320px; height: auto; border-radius: 16px; margin: 0 auto; display: block; aspect-ratio: 1/1; object-fit: cover; }
+  /* Bottom navigation */
+  .bottom-nav { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 420px; background: #FFFFFF; display: flex; justify-content: space-around; align-items: center; padding: 8px 8px calc(8px + env(safe-area-inset-bottom, 0px)); border-top: 1px solid rgba(8,145,178,0.08); z-index: 100; box-shadow: 0 -2px 12px rgba(8,145,178,0.06); }
+  @media (max-width: 420px) { .bottom-nav { max-width: 100%; } }
+  .bottom-nav-item { display: flex; flex-direction: column; align-items: center; gap: 2px; cursor: pointer; padding: 4px 8px; min-width: 48px; min-height: 48px; justify-content: center; text-decoration: none; transition: all 0.2s ease; -webkit-tap-highlight-color: transparent; }
+  .bottom-nav-item:active { transform: scale(0.92); }
+  .bottom-nav-item .bn-icon { font-size: 20px; line-height: 1; }
+  .bottom-nav-item .bn-label { font-size: 10px; color: #94A3B8; line-height: 1; transition: color 0.2s ease; }
+  .bottom-nav-item.active-nav .bn-label { color: #0891B2; font-weight: 600; }
+  /* Select & textarea native-like on mobile */
+  select, textarea {
+    -webkit-appearance: none;
+    appearance: none;
+    font-size: 16px !important; /* prevent iOS zoom on focus */
+  }
+  textarea { font-size: 16px !important; }
+  /* Smooth scroll anchor offset for sticky header */
+  section[id] { scroll-margin-top: 56px; }
+  /* Care card touch area */
+  .care-card-header { cursor: pointer; min-height: 64px; -webkit-tap-highlight-color: transparent; }
+  /* Footer safe area */
+  footer { padding-bottom: calc(32px + env(safe-area-inset-bottom, 0px)) !important; }
+  /* Chip touch targets */
+  .detail-chip, .ai-chip { min-height: 36px; display: inline-flex; align-items: center; }
+  /* Check list touch targets */
+  #checklist [data-key] { min-height: 48px; }
+  /* Back to top */
+  .back-to-top {
+    position: fixed;
+    bottom: 96px;
+    right: max(16px, calc((100vw - 420px) / 2 + 16px));
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: #0891B2;
+    color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    cursor: pointer;
+    z-index: 99;
+    box-shadow: 0 2px 12px rgba(8,145,178,0.3);
+    transition: all 0.3s ease;
+    opacity: 0; transform: translateY(10px); pointer-events: none;
+  }
+  .back-to-top.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+  .back-to-top:active { transform: scale(0.9); }
+  @media (max-width: 420px) {
+    .back-to-top { right: 16px; }
+  }
+</style>
+</head>
+<body class="font-body bg-primary-bg">
+<div id="page" class="bg-primary-bg">
+
+<!-- ==================== Header ==================== -->
+<header class="bg-white flex items-center justify-between px-5 py-[14px] shadow-[0_1px_8px_rgba(8,145,178,0.06)] sticky top-0 z-50" style="padding-top:calc(14px + env(safe-area-inset-top, 0px))">
+  <h1 class="font-title text-[16px] font-bold text-primary leading-5">痔疮大专家</h1>
+  <nav class="flex gap-4">
+    <a href="#selfCheck" class="text-[13px] font-medium text-text-gray no-underline min-h-[44px] flex items-center">自查</a>
+    <a href="#aiConsult" class="text-[13px] font-medium text-text-gray no-underline min-h-[44px] flex items-center">AI</a>
+    <a href="#quiz" class="text-[13px] font-medium text-text-gray no-underline min-h-[44px] flex items-center">测验</a>
+  </nav>
+</header>
+
+<!-- ==================== Hero ==================== -->
+<section class="flex flex-col items-center text-center px-6 pt-12 pb-10 gap-5 bg-primary-bg">
+  <div class="bg-primary-badge rounded-full px-[14px] py-[6px]">
+    <span class="text-[12px] font-medium text-primary">匿名 · 无需注册 · 全程免费</span>
+  </div>
+  <h2 class="font-title text-[28px] font-bold text-text-dark leading-[38px]">关心一下自己，<br>没什么不好意思的</h2>
+  <p class="text-[14px] text-text-gray leading-[22px]">每2个人中就有1人经历过痔疮困扰。<br>科学自查、温和护理，从这里开始。</p>
+  <a href="#selfCheck" class="btn-press inline-flex bg-primary text-white text-[16px] font-semibold px-8 py-[14px] rounded-full shadow-[0_4px_12px_rgba(8,145,178,0.25)] no-underline">开始自查 →</a>
+  <!-- Hero Image -->
+  <img src="images/A_warm_gentle_cartoon_illustra_2026-06-16T06-41-06.png" alt="温和医疗科普插图" class="hero-img" loading="eager" onerror="this.style.display='none'">
+</section>
+
+<!-- ==================== 自查模块 ==================== -->
+<section id="selfCheck" class="bg-white px-6 pt-10 pb-10 flex flex-col gap-5">
+  <div class="bg-primary-badge rounded-full px-3 py-1 w-fit">
+    <span class="text-[12px] font-semibold text-primary">📋 自助筛查</span>
+  </div>
+  <h3 class="font-title text-[20px] font-bold text-text-dark leading-7">看看你的情况属于哪个阶段</h3>
+
+  <!-- Step Indicator -->
+  <div class="flex items-center gap-2">
+    <div id="stepBadge" class="bg-primary text-white text-[11px] font-bold px-2.5 py-1 rounded-full">步骤 1/2</div>
+    <div class="flex-1 h-1.5 bg-[#E8F1F6] rounded-full overflow-hidden">
+      <div id="stepProgress" class="h-full bg-primary rounded-full transition-all duration-400" style="width:50%"></div>
+    </div>
+  </div>
+
+  <!-- Step 1: 症状选择 -->
+  <div id="step1" class="flex flex-col gap-[10px]">
+    <p class="text-[13px] text-text-gray leading-5 mb-1">请勾选你正在经历的症状（可多选）</p>
+    <div class="symptom-card flex items-center gap-[14px] p-4 bg-card-bg rounded-[14px] border border-primary-badge" onclick="toggleSymptom(this)" data-symptom="便血" data-severity="2">
+      <div class="w-10 h-10 rounded-xl bg-danger-bg flex items-center justify-center text-xl">🩸</div>
+      <div class="flex-1"><span class="text-[15px] font-semibold text-text-dark">便血 / 排便出血</span><p class="text-[11px] text-text-light">排便时见鲜红色血液</p></div>
+      <div class="check-box ml-auto w-6 h-6 rounded-md border-2 border-primary-badge bg-[#E8F1F6] flex-shrink-0 flex items-center justify-center">
+        <svg class="hidden w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+      </div>
+    </div>
+    <div class="symptom-card flex items-center gap-[14px] p-4 bg-card-bg rounded-[14px] border border-primary-badge" onclick="toggleSymptom(this)" data-symptom="肉球" data-severity="3">
+      <div class="w-10 h-10 rounded-xl bg-orange-bg flex items-center justify-center text-xl">🔵</div>
+      <div class="flex-1"><span class="text-[15px] font-semibold text-text-dark">肉球 / 脱出</span><p class="text-[11px] text-text-light">肛门有肿物突出或脱出感</p></div>
+      <div class="check-box ml-auto w-6 h-6 rounded-md border-2 border-primary-badge bg-[#E8F1F6] flex-shrink-0 flex items-center justify-center">
+        <svg class="hidden w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+      </div>
+    </div>
+    <div class="symptom-card flex items-center gap-[14px] p-4 bg-card-bg rounded-[14px] border border-primary-badge" onclick="toggleSymptom(this)" data-symptom="疼痛" data-severity="2">
+      <div class="w-10 h-10 rounded-xl bg-danger-bg flex items-center justify-center text-xl">⚡</div>
+      <div class="flex-1"><span class="text-[15px] font-semibold text-text-dark">疼痛 / 灼热感</span><p class="text-[11px] text-text-light">肛周持续疼痛或排便灼烧感</p></div>
+      <div class="check-box ml-auto w-6 h-6 rounded-md border-2 border-primary-badge bg-[#E8F1F6] flex-shrink-0 flex items-center justify-center">
+        <svg class="hidden w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+      </div>
+    </div>
+    <div class="symptom-card flex items-center gap-[14px] p-4 bg-card-bg rounded-[14px] border border-primary-badge" onclick="toggleSymptom(this)" data-symptom="便秘" data-severity="1">
+      <div class="w-10 h-10 rounded-xl bg-primary-bg flex items-center justify-center text-xl">🟤</div>
+      <div class="flex-1"><span class="text-[15px] font-semibold text-text-dark">便秘 / 排便困难</span><p class="text-[11px] text-text-light">长期排便费力或不规律</p></div>
+      <div class="check-box ml-auto w-6 h-6 rounded-md border-2 border-primary-badge bg-[#E8F1F6] flex-shrink-0 flex items-center justify-center">
+        <svg class="hidden w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 2: 追加细节 -->
+  <div id="step2" class="hidden flex flex-col gap-[10px]">
+    <p class="text-[13px] text-text-gray leading-5 mb-1">请补充一些细节信息（选填）</p>
+    <div class="flex flex-col gap-2">
+      <label class="text-[13px] font-medium text-text-dark">持续时长</label>
+      <div class="flex gap-2 flex-wrap">
+        <span class="detail-chip px-3 py-2 rounded-full bg-card-bg text-[12px] text-text-gray border border-transparent select-none" onclick="toggleChip(this)" data-detail="duration" data-value="week">不到1周</span>
+        <span class="detail-chip px-3 py-2 rounded-full bg-card-bg text-[12px] text-text-gray border border-transparent select-none" onclick="toggleChip(this)" data-detail="duration" data-value="month">1-4周</span>
+        <span class="detail-chip px-3 py-2 rounded-full bg-card-bg text-[12px] text-text-gray border border-transparent select-none" onclick="toggleChip(this)" data-detail="duration" data-value="long">1个月以上</span>
+      </div>
+    </div>
+    <div class="flex flex-col gap-2 mt-2">
+      <label class="text-[13px] font-medium text-text-dark">日常习惯</label>
+      <div class="flex gap-2 flex-wrap">
+        <span class="detail-chip px-3 py-2 rounded-full bg-card-bg text-[12px] text-text-gray border border-transparent select-none" onclick="toggleChip(this)" data-detail="habit" data-value="sit">久坐 > 6h</span>
+        <span class="detail-chip px-3 py-2 rounded-full bg-card-bg text-[12px] text-text-gray border border-transparent select-none" onclick="toggleChip(this)" data-detail="habit" data-value="spicy">喜辛辣</span>
+        <span class="detail-chip px-3 py-2 rounded-full bg-card-bg text-[12px] text-text-gray border border-transparent select-none" onclick="toggleChip(this)" data-detail="habit" data-value="water">饮水少</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Result -->
+  <div id="selfResult" class="result-area flex flex-col items-center gap-3 p-5 bg-primary-bg rounded-2xl text-center">
+    <p class="text-[13px] text-text-light leading-5">请选择上方症状，AI将为你分析</p>
+  </div>
+
+  <!-- Buttons -->
+  <div class="flex gap-3">
+    <button id="btnBack" onclick="prevStep()" class="hidden btn-press flex-1 bg-card-bg text-text-gray text-[14px] font-semibold py-[14px] rounded-full text-center">← 上一步</button>
+    <button id="btnNext" onclick="nextStep()" class="btn-press flex-1 bg-primary text-white text-[15px] font-semibold py-[14px] rounded-full shadow-[0_3px_10px_rgba(8,145,178,0.2)] text-center">下一步 →</button>
+    <button id="btnAnalyze" onclick="analyze()" class="hidden btn-press flex-1 bg-primary text-white text-[15px] font-semibold py-[14px] rounded-full shadow-[0_3px_10px_rgba(8,145,178,0.2)] text-center">🔍 分析我的情况</button>
+  </div>
+  <!-- Self-check illustration -->
+  <img src="images/A_friendly_medical_self_check__2026-06-16T06-41-35.png" alt="自助筛查示意图" class="section-img mt-2" loading="lazy" onerror="this.style.display='none'">
+</section>
+
+<!-- ==================== AI问诊模块（增强版）==================== -->
+<section id="aiConsult" class="bg-primary-bg px-6 pt-10 pb-10 flex flex-col gap-5">
+  <div class="bg-primary-badge rounded-full px-3 py-1 w-fit">
+    <span class="text-[12px] font-semibold text-primary">🤖 AI智能问诊</span>
+  </div>
+  <h3 class="font-title text-[20px] font-bold text-text-dark leading-7">告诉AI你的情况 获取专属护理方案</h3>
+  <div class="bg-white rounded-2xl p-4 flex flex-col gap-[14px]">
+    <div class="flex flex-col gap-2">
+      <label class="text-[13px] font-medium text-text-dark">你的年龄</label>
+      <select id="aiAge" class="w-full bg-card-bg rounded-xl px-4 py-3 text-[13px] text-text-dark outline-none border-none">
+        <option value="">请选择</option>
+        <option>18-25岁</option><option>26-35岁</option><option>36-45岁</option><option>46-55岁</option><option>56岁以上</option>
+      </select>
+    </div>
+    <div class="flex flex-col gap-2">
+      <label class="text-[13px] font-medium text-text-dark">特殊状态</label>
+      <div class="flex gap-2 flex-wrap">
+        <span class="ai-chip px-3 py-2 rounded-full bg-card-bg text-[12px] text-text-gray border border-transparent select-none" onclick="toggleAiChip(this)" data-ai="postpartum">🤰 产后</span>
+        <span class="ai-chip px-3 py-2 rounded-full bg-card-bg text-[12px] text-text-gray border border-transparent select-none" onclick="toggleAiChip(this)" data-ai="pregnant">🤱 孕期</span>
+        <span class="ai-chip px-3 py-2 rounded-full bg-card-bg text-[12px] text-text-gray border border-transparent select-none" onclick="toggleAiChip(this)" data-ai="none">无特殊</span>
+      </div>
+    </div>
+    <textarea id="aiInput" placeholder="描述你遇到的问题和日常习惯…&#10;例如：久坐办公，偶尔便血，爱吃辣" class="w-full bg-card-bg rounded-xl p-4 text-[13px] text-text-dark leading-5 resize-none outline-none border-none h-[80px] placeholder:text-text-light"></textarea>
+    <button onclick="aiConsult()" class="btn-press w-full bg-success text-white text-[15px] font-semibold py-[14px] rounded-full text-center">生成我的护理方案</button>
+    <p class="text-[11px] text-text-light text-center leading-4">🔒 全程匿名，数据仅用于本次分析</p>
+  </div>
+  <div id="aiResult" class="hidden bg-white rounded-2xl p-5 flex flex-col gap-3 fade-in"></div>
+</section>
+
+<!-- ==================== 人群知识库（增强版）==================== -->
+<section id="knowledge" class="bg-white px-6 pt-10 pb-10 flex flex-col gap-5">
+  <div class="bg-primary-badge rounded-full px-3 py-1 w-fit">
+    <span class="text-[12px] font-semibold text-primary">📚 专属知识库</span>
+  </div>
+  <h3 class="font-title text-[20px] font-bold text-text-dark leading-7">不同人群 不同方案</h3>
+
+  <!-- Knowledge base illustration -->
+  <img src="images/Three_diverse_people_groups_il_2026-06-16T06-42-03.png" alt="三大人群示意图" class="section-img" loading="lazy" onerror="this.style.display='none'">
+
+  <!-- Tabs -->
+  <div class="flex bg-primary-bg rounded-xl p-1 gap-1 overflow-x-auto" style="-webkit-overflow-scrolling:touch;scrollbar-width:none">
+    <div class="tab-btn active text-center py-[10px] rounded-[10px] text-[12px] font-semibold text-white bg-primary px-4 flex-shrink-0" onclick="switchTab(this, 'office')">💼 上班族</div>
+    <div class="tab-btn text-center py-[10px] rounded-[10px] text-[12px] font-medium text-text-gray px-4 flex-shrink-0" onclick="switchTab(this, 'postpartum')">🤰 产后女性</div>
+    <div class="tab-btn text-center py-[10px] rounded-[10px] text-[12px] font-medium text-text-gray px-4 flex-shrink-0" onclick="switchTab(this, 'elderly')">🧓 中老年</div>
+  </div>
+
+  <!-- Tab Content -->
+  <div id="tabContent" class="bg-card-bg rounded-2xl p-4 flex flex-col gap-3">
+    <h4 class="text-[16px] font-semibold text-text-dark leading-6">为什么久坐容易诱发痔疮？</h4>
+    <p class="text-[13px] text-text-gray leading-[22px]">长时间保持坐姿会导致肛门周围静脉回流不畅，局部充血水肿。建议每45分钟起身活动3-5分钟，改善局部血液循环。</p>
+    <div class="flex items-center gap-2 bg-primary-bg rounded-[10px] px-[14px] py-3">
+      <span class="text-sm">💡</span>
+      <span class="text-[12px] font-medium text-primary leading-[18px]">每天喝够8杯水，多吃膳食纤维，远离久坐陷阱</span>
+    </div>
+    <div class="flex flex-col gap-2 mt-1">
+      <span class="text-[13px] font-semibold text-text-dark">📌 上班族护肛三步法</span>
+      <div class="flex items-start gap-2"><span class="text-primary font-bold text-sm flex-shrink-0">1.</span><span class="text-[12px] text-text-gray">设置45分钟站立提醒，利用接水/上厕所间隙活动</span></div>
+      <div class="flex items-start gap-2"><span class="text-primary font-bold text-sm flex-shrink-0">2.</span><span class="text-[12px] text-text-gray">办公椅加透气坐垫，减轻肛周压迫</span></div>
+      <div class="flex items-start gap-2"><span class="text-primary font-bold text-sm flex-shrink-0">3.</span><span class="text-[12px] text-text-gray">午餐选择高纤维食物，自带便当多加蔬菜</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 互动解剖图 ==================== -->
+<section class="bg-primary-bg px-6 pt-10 pb-10 flex flex-col gap-5">
+  <div class="bg-primary-badge rounded-full px-3 py-1 w-fit">
+    <span class="text-[12px] font-semibold text-primary">🔬 互动科普</span>
+  </div>
+  <h3 class="font-title text-[20px] font-bold text-text-dark leading-7">点击查看不同类型的区别</h3>
+  <p class="text-[13px] text-text-gray leading-5 -mt-3">轻触下方区域，了解内痔、外痔、混合痔的不同</p>
+
+  <!-- Interactive Anatomy -->
+  <div class="relative bg-white rounded-2xl p-3 overflow-hidden">
+    <div class="flex flex-col gap-2">
+      <!-- Zone 1: 内痔 -->
+      <div class="anatomy-zone bg-primary-bg rounded-2xl p-5 text-center cursor-pointer" onclick="showAnatomy('internal')" id="zoneInternal">
+        <div class="text-3xl mb-2">🟢</div>
+        <span class="text-[16px] font-semibold text-primary">内痔区域</span>
+        <p class="text-[11px] text-text-light mt-1">齿状线以上 · 黏膜覆盖 · 以出血为主</p>
+      </div>
+      <!-- Zone 2: 外痔 -->
+      <div class="anatomy-zone bg-orange-bg rounded-2xl p-5 text-center cursor-pointer" onclick="showAnatomy('external')" id="zoneExternal">
+        <div class="text-3xl mb-2">🟠</div>
+        <span class="text-[16px] font-semibold text-orange">外痔区域</span>
+        <p class="text-[11px] text-text-light mt-1">齿状线以下 · 皮肤覆盖 · 以疼痛为主</p>
+      </div>
+      <!-- Zone 3: 混合痔 -->
+      <div class="anatomy-zone bg-danger-bg rounded-2xl p-5 text-center cursor-pointer" onclick="showAnatomy('mixed')" id="zoneMixed">
+        <div class="text-3xl mb-2">🔴</div>
+        <span class="text-[16px] font-semibold text-danger">混合痔区域</span>
+        <p class="text-[11px] text-text-light mt-1">跨齿状线 · 兼具二者 · 最常见类型</p>
+      </div>
+    </div>
+    <!-- Detail popup area -->
+    <div id="anatomyDetail" class="mt-4 bg-card-bg rounded-xl p-4 text-center fade-in hidden">
+      <p id="anatomyDetailText" class="text-[13px] text-text-gray leading-5"></p>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 居家护理专区（增强版）==================== -->
+<section id="care" class="bg-white px-6 pt-10 pb-10 flex flex-col gap-5">
+  <div class="bg-primary-badge rounded-full px-3 py-1 w-fit">
+    <span class="text-[12px] font-semibold text-primary">🏠 居家护理</span>
+  </div>
+  <h3 class="font-title text-[20px] font-bold text-text-dark leading-7">在家就能做的科学护理</h3>
+
+  <!-- Care illustration -->
+  <img src="images/A_warm_cozy_bathroom_scene_in__2026-06-16T06-43-23.png" alt="居家护理示意图" class="section-img" loading="lazy" onerror="this.style.display='none'">
+
+  <!-- Care Cards - Expandable -->
+  <div class="flex flex-col gap-3">
+    <!-- 坐浴 -->
+    <div class="bg-card-bg rounded-[14px] overflow-hidden">
+      <div class="care-card-header flex items-center gap-[14px] p-[18px]" onclick="toggleCare(this)">
+        <div class="w-11 h-11 rounded-[14px] bg-primary-bg flex items-center justify-center text-[22px] flex-shrink-0">🛁</div>
+        <div class="flex-1 flex flex-col gap-1">
+          <span class="text-[15px] font-semibold text-text-dark">温水坐浴</span>
+          <span class="text-[12px] text-text-gray leading-[18px]">每日1-2次 · 每次10-15分钟 · 水温40°C</span>
+        </div>
+        <span class="text-text-light text-lg transition-transform duration-300 caret-arrow">▸</span>
+      </div>
+      <div class="care-detail px-[18px]">
+        <div class="flex flex-col gap-3 pb-4">
+          <div class="bg-primary-bg/50 rounded-xl p-3">
+            <p class="text-[13px] text-text-dark font-semibold mb-2">🕐 坐浴计时器</p>
+            <div class="flex items-center gap-3">
+              <span class="timer-display text-[28px] font-bold text-primary font-title" id="timerDisplay">10:00</span>
+              <button onclick="startTimer()" id="timerBtn" class="btn-press bg-primary text-white text-[13px] font-semibold px-5 py-2 rounded-full">开始计时</button>
+              <button onclick="resetTimer()" class="btn-press bg-card-bg text-text-gray text-[13px] px-4 py-2 rounded-full">重置</button>
+            </div>
+          </div>
+          <p class="text-[12px] text-text-gray leading-[18px]">使用专用坐浴盆或浴缸，水温以手腕内侧试温不烫为宜。坐浴后用柔软毛巾轻轻蘸干，勿用力擦拭。可加入少量食盐或遵医嘱添加药物。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 饮食 -->
+    <div class="bg-card-bg rounded-[14px] overflow-hidden">
+      <div class="care-card-header flex items-center gap-[14px] p-[18px]" onclick="toggleCare(this)">
+        <div class="w-11 h-11 rounded-[14px] bg-orange-bg flex items-center justify-center text-[22px] flex-shrink-0">🥗</div>
+        <div class="flex-1 flex flex-col gap-1">
+          <span class="text-[15px] font-semibold text-text-dark">饮食调理</span>
+          <span class="text-[12px] text-text-gray leading-[18px]">多纤维 · 多喝水 · 少辛辣油腻</span>
+        </div>
+        <span class="text-text-light text-lg transition-transform duration-300 caret-arrow">▸</span>
+      </div>
+      <div class="care-detail px-[18px]">
+        <div class="flex flex-col gap-3 pb-4">
+          <p class="text-[13px] text-text-dark font-semibold">🥦 推荐食物清单</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="bg-success/10 text-success text-[12px] px-3 py-1.5 rounded-full">燕麦</span>
+            <span class="bg-success/10 text-success text-[12px] px-3 py-1.5 rounded-full">红薯</span>
+            <span class="bg-success/10 text-success text-[12px] px-3 py-1.5 rounded-full">火龙果</span>
+            <span class="bg-success/10 text-success text-[12px] px-3 py-1.5 rounded-full">香蕉</span>
+            <span class="bg-success/10 text-success text-[12px] px-3 py-1.5 rounded-full">芹菜</span>
+            <span class="bg-success/10 text-success text-[12px] px-3 py-1.5 rounded-full">西兰花</span>
+            <span class="bg-success/10 text-success text-[12px] px-3 py-1.5 rounded-full">奇亚籽</span>
+            <span class="bg-success/10 text-success text-[12px] px-3 py-1.5 rounded-full">全麦面包</span>
+          </div>
+          <p class="text-[13px] text-text-dark font-semibold mt-1">⚠️ 需要少吃的</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="bg-danger/10 text-danger text-[12px] px-3 py-1.5 rounded-full">辣椒</span>
+            <span class="bg-danger/10 text-danger text-[12px] px-3 py-1.5 rounded-full">酒精</span>
+            <span class="bg-danger/10 text-danger text-[12px] px-3 py-1.5 rounded-full">烧烤</span>
+            <span class="bg-danger/10 text-danger text-[12px] px-3 py-1.5 rounded-full">油炸食品</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 用药 -->
+    <div class="bg-card-bg rounded-[14px] overflow-hidden">
+      <div class="care-card-header flex items-center gap-[14px] p-[18px]" onclick="toggleCare(this)">
+        <div class="w-11 h-11 rounded-[14px] bg-danger-bg flex items-center justify-center text-[22px] flex-shrink-0">💊</div>
+        <div class="flex-1 flex flex-col gap-1">
+          <span class="text-[15px] font-semibold text-text-dark">外用药安全指南</span>
+          <span class="text-[12px] text-text-gray leading-[18px]">遵医嘱 · 勿长期依赖</span>
+        </div>
+        <span class="text-text-light text-lg transition-transform duration-300 caret-arrow">▸</span>
+      </div>
+      <div class="care-detail px-[18px]">
+        <div class="flex flex-col gap-3 pb-4">
+          <p class="text-[12px] text-text-gray leading-[18px]">常见外用药物包括痔疮膏、痔疮栓、中药熏洗剂等。使用前请仔细阅读说明书，如有不适应立即停用并咨询医生。孕妇及哺乳期女性用药需格外谨慎，必须在医生指导下使用。</p>
+          <div class="bg-primary-bg rounded-xl p-3">
+            <p class="text-[12px] text-primary font-medium leading-[18px]">💡 用药提醒：连续使用不宜超过2周，症状未缓解应及时就医，勿自行加量</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 防复发 -->
+    <div class="bg-card-bg rounded-[14px] overflow-hidden">
+      <div class="care-card-header flex items-center gap-[14px] p-[18px]" onclick="toggleCare(this)">
+        <div class="w-11 h-11 rounded-[14px] bg-primary-bg flex items-center justify-center text-[22px] flex-shrink-0">🔄</div>
+        <div class="flex-1 flex flex-col gap-1">
+          <span class="text-[15px] font-semibold text-text-dark">日常防复发习惯</span>
+          <span class="text-[12px] text-text-gray leading-[18px]">养成好习惯 · 告别反复</span>
+        </div>
+        <span class="text-text-light text-lg transition-transform duration-300 caret-arrow">▸</span>
+      </div>
+      <div class="care-detail px-[18px]">
+        <div class="flex flex-col gap-2 pb-4">
+          <div class="flex items-start gap-2"><span class="text-primary text-sm flex-shrink-0">✅</span><span class="text-[12px] text-text-gray leading-[18px]">养成定时排便习惯，不要忍便</span></div>
+          <div class="flex items-start gap-2"><span class="text-primary text-sm flex-shrink-0">✅</span><span class="text-[12px] text-text-gray leading-[18px]">排便时间不超过5分钟，不要在厕所看手机</span></div>
+          <div class="flex items-start gap-2"><span class="text-primary text-sm flex-shrink-0">✅</span><span class="text-[12px] text-text-gray leading-[18px]">便后用温水清洗代替干擦</span></div>
+          <div class="flex items-start gap-2"><span class="text-primary text-sm flex-shrink-0">✅</span><span class="text-[12px] text-text-gray leading-[18px]">每周至少150分钟中等强度运动</span></div>
+          <div class="flex items-start gap-2"><span class="text-primary text-sm flex-shrink-0">✅</span><span class="text-[12px] text-text-gray leading-[18px]">保持健康体重，减轻盆底压力</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 每日护理打卡 ==================== -->
+<section class="bg-primary-bg px-6 pt-10 pb-10 flex flex-col gap-5">
+  <div class="bg-primary-badge rounded-full px-3 py-1 w-fit">
+    <span class="text-[12px] font-semibold text-primary">✅ 每日打卡</span>
+  </div>
+  <h3 class="font-title text-[20px] font-bold text-text-dark leading-7">今日护理完成情况</h3>
+  <p class="text-[13px] text-text-gray leading-5 -mt-3">每天坚持这些小习惯，逐步改善症状</p>
+
+  <div id="checklist" class="bg-white rounded-2xl p-4 flex flex-col gap-3">
+    <div class="flex items-center gap-3 py-2 border-b border-primary-badge/50 cursor-pointer" onclick="toggleCheck(this)" data-key="water">
+      <div class="check-circle w-6 h-6 rounded-full border-2 border-primary-badge flex items-center justify-center flex-shrink-0 transition-colors">
+        <svg class="hidden w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+      </div>
+      <span class="text-[14px] text-text-dark flex-1">💧 喝水 ≥ 2L</span>
+    </div>
+    <div class="flex items-center gap-3 py-2 border-b border-primary-badge/50 cursor-pointer" onclick="toggleCheck(this)" data-key="fiber">
+      <div class="check-circle w-6 h-6 rounded-full border-2 border-primary-badge flex items-center justify-center flex-shrink-0 transition-colors">
+        <svg class="hidden w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+      </div>
+      <span class="text-[14px] text-text-dark flex-1">🥬 摄入足量膳食纤维</span>
+    </div>
+    <div class="flex items-center gap-3 py-2 border-b border-primary-badge/50 cursor-pointer" onclick="toggleCheck(this)" data-key="bath">
+      <div class="check-circle w-6 h-6 rounded-full border-2 border-primary-badge flex items-center justify-center flex-shrink-0 transition-colors">
+        <svg class="hidden w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+      </div>
+      <span class="text-[14px] text-text-dark flex-1">🛁 温水坐浴完成</span>
+    </div>
+    <div class="flex items-center gap-3 py-2 border-b border-primary-badge/50 cursor-pointer" onclick="toggleCheck(this)" data-key="move">
+      <div class="check-circle w-6 h-6 rounded-full border-2 border-primary-badge flex items-center justify-center flex-shrink-0 transition-colors">
+        <svg class="hidden w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+      </div>
+      <span class="text-[14px] text-text-dark flex-1">🚶 起身活动 ≥ 30分钟</span>
+    </div>
+    <div class="flex items-center gap-3 py-2 cursor-pointer" onclick="toggleCheck(this)" data-key="spicy">
+      <div class="check-circle w-6 h-6 rounded-full border-2 border-primary-badge flex items-center justify-center flex-shrink-0 transition-colors">
+        <svg class="hidden w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+      </div>
+      <span class="text-[14px] text-text-dark flex-1">🌶️ 避免辛辣刺激食物</span>
+    </div>
+  </div>
+
+  <!-- Progress bar -->
+  <div class="bg-white rounded-2xl p-4 flex flex-col gap-3">
+    <div class="flex justify-between items-center">
+      <span class="text-[13px] font-semibold text-text-dark">今日完成度</span>
+      <span id="checkProgress" class="text-[15px] font-bold text-primary">0/5</span>
+    </div>
+    <div class="w-full h-3 bg-primary-bg rounded-full overflow-hidden">
+      <div id="checkBar" class="h-full bg-success rounded-full transition-all duration-500" style="width:0%"></div>
+    </div>
+    <p id="checkEncourage" class="text-[12px] text-text-light text-center">从今天开始，每完成一项都是进步 💪</p>
+  </div>
+</section>
+
+<!-- ==================== 趣味健康测验 ==================== -->
+<section id="quiz" class="bg-white px-6 pt-10 pb-10 flex flex-col gap-5">
+  <div class="bg-primary-badge rounded-full px-3 py-1 w-fit">
+    <span class="text-[12px] font-semibold text-primary">🎯 趣味测验</span>
+  </div>
+  <h3 class="font-title text-[20px] font-bold text-text-dark leading-7">测测你的痔疮知识</h3>
+  <p class="text-[13px] text-text-gray leading-5 -mt-3">5道题，看看你对痔疮了解多少</p>
+
+  <div id="quizContainer" class="bg-card-bg rounded-2xl p-4 flex flex-col gap-4">
+    <div id="quizQuestion" class="flex flex-col gap-3">
+      <div class="flex justify-between items-center">
+        <span class="text-[12px] font-medium text-text-light">第 <span id="qNum">1</span>/5 题</span>
+        <span class="text-[12px] font-medium text-primary">得分: <span id="quizScore">0</span></span>
+      </div>
+      <p id="qText" class="text-[15px] font-semibold text-text-dark leading-6"></p>
+      <div id="qOptions" class="flex flex-col gap-2"></div>
+    </div>
+    <button id="quizNext" onclick="nextQuiz()" class="hidden btn-press w-full bg-primary text-white text-[14px] font-semibold py-3 rounded-full text-center">下一题 →</button>
+    <div id="quizResult" class="hidden flex flex-col items-center gap-3 p-5 bg-primary-bg rounded-xl text-center bounce-in">
+      <span class="text-4xl" id="quizEmoji"></span>
+      <p class="text-[16px] font-bold text-text-dark" id="quizResultTitle"></p>
+      <p class="text-[13px] text-text-gray leading-5" id="quizResultDesc"></p>
+      <button onclick="resetQuiz()" class="btn-press bg-primary text-white text-[14px] font-semibold px-6 py-3 rounded-full">再来一次 🔄</button>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 症状日记 ==================== -->
+<section class="bg-primary-bg px-6 pt-10 pb-10 flex flex-col gap-5">
+  <div class="bg-primary-badge rounded-full px-3 py-1 w-fit">
+    <span class="text-[12px] font-semibold text-primary">📓 症状日记</span>
+  </div>
+  <h3 class="font-title text-[20px] font-bold text-text-dark leading-7">记录今天的感受</h3>
+  <p class="text-[13px] text-text-gray leading-5 -mt-3">简单记录，帮助你和医生更好地了解病情变化</p>
+
+  <div class="bg-white rounded-2xl p-4 flex flex-col gap-4">
+    <!-- Pain level -->
+    <div class="flex flex-col gap-2">
+      <span class="text-[13px] font-medium text-text-dark">😣 今天的不适程度</span>
+      <div class="flex justify-between gap-1">
+        <span class="emoji-btn text-2xl p-2" onclick="selectEmoji(this, 1)" data-level="1">😊</span>
+        <span class="emoji-btn text-2xl p-2" onclick="selectEmoji(this, 2)" data-level="2">😐</span>
+        <span class="emoji-btn text-2xl p-2" onclick="selectEmoji(this, 3)" data-level="3">😣</span>
+        <span class="emoji-btn text-2xl p-2" onclick="selectEmoji(this, 4)" data-level="4">😫</span>
+        <span class="emoji-btn text-2xl p-2" onclick="selectEmoji(this, 5)" data-level="5">😭</span>
+      </div>
+    </div>
+    <!-- Notes -->
+    <textarea id="diaryNote" placeholder="记录今天的观察…（如出血量、疼痛时间等）" class="w-full bg-card-bg rounded-xl p-3 text-[13px] text-text-dark leading-5 resize-none outline-none border-none h-[60px] placeholder:text-text-light"></textarea>
+    <button onclick="saveDiary()" class="btn-press w-full bg-primary text-white text-[14px] font-semibold py-3 rounded-full text-center">📝 记录今天</button>
+    <!-- Diary entries -->
+    <div id="diaryEntries" class="flex flex-col gap-2 max-h-[200px] overflow-y-auto"></div>
+  </div>
+</section>
+
+<!-- ==================== 风险预警 ==================== -->
+<section class="bg-white px-6 pt-10 pb-10 flex flex-col gap-5">
+  <div class="bg-danger-bg rounded-full px-3 py-1 w-fit">
+    <span class="text-[12px] font-semibold text-danger">🚨 风险预警</span>
+  </div>
+  <h3 class="font-title text-[20px] font-bold text-text-dark leading-7">出现以下情况 请立即就医</h3>
+  <div class="flex flex-col gap-[10px]">
+    <div class="flex items-center gap-3 p-4 bg-danger-bg rounded-[14px] border border-[rgba(220,38,38,0.15)]">
+      <span class="text-lg flex-shrink-0">🔴</span>
+      <span class="text-[14px] font-semibold text-danger leading-5">大量出血 呈喷射状或持续滴血不止</span>
+    </div>
+    <div class="flex items-center gap-3 p-4 bg-danger-bg rounded-[14px] border border-[rgba(220,38,38,0.15)]">
+      <span class="text-lg flex-shrink-0">🔴</span>
+      <span class="text-[14px] font-semibold text-danger leading-5">痔核脱出无法自行回纳 伴剧烈疼痛</span>
+    </div>
+    <div class="flex items-center gap-3 p-4 bg-danger-bg rounded-[14px] border border-[rgba(220,38,38,0.15)]">
+      <span class="text-lg flex-shrink-0">🔴</span>
+      <span class="text-[14px] font-semibold text-danger leading-5">肛门持续剧痛 伴有发热等全身症状</span>
+    </div>
+    <div class="flex items-center gap-3 p-4 bg-danger-bg rounded-[14px] border border-[rgba(220,38,38,0.15)]">
+      <span class="text-lg flex-shrink-0">🔴</span>
+      <span class="text-[14px] font-semibold text-danger leading-5">出现黑色柏油样便 提示上消化道出血</span>
+    </div>
+  </div>
+  <p class="text-[11px] text-text-light text-center leading-4">以上仅为风险提示 不能替代专业医疗诊断<br>如有上述任一情况 请立即前往医院肛肠科就诊</p>
+</section>
+
+<!-- ==================== 科普图文库 ==================== -->
+<section class="bg-primary-bg px-6 pt-10 pb-10 flex flex-col gap-5">
+  <div class="bg-primary-badge rounded-full px-3 py-1 w-fit">
+    <span class="text-[12px] font-semibold text-primary">📖 基础科普</span>
+  </div>
+  <h3 class="font-title text-[20px] font-bold text-text-dark leading-7">一张图看懂痔疮分类</h3>
+
+  <!-- Education illustration -->
+  <img src="images/A_gentle_simplified_educationa_2026-06-16T06-42-30.png" alt="痔疮分类科普图" class="section-img" loading="lazy" onerror="this.style.display='none'">
+
+  <div class="flex flex-col gap-3">
+    <div class="bg-white rounded-[14px] p-[18px] flex flex-col gap-[10px]">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-[10px] bg-primary-bg flex items-center justify-center">
+            <span class="text-base font-semibold text-primary">①</span>
+          </div>
+          <h4 class="text-[17px] font-semibold text-text-dark">内痔</h4>
+        </div>
+        <div class="bg-primary-bg rounded-full px-[10px] py-1">
+          <span class="text-[11px] font-medium text-success">最常见</span>
+        </div>
+      </div>
+      <p class="text-[13px] text-text-gray leading-5">发生在齿状线以上，表面覆盖黏膜。以出血和脱出为主要表现，早期常无明显疼痛。根据脱出程度分为I-IV度。</p>
+      <div class="flex gap-2 flex-wrap">
+        <span class="text-[11px] bg-primary-bg text-primary px-2 py-1 rounded-full">出血</span>
+        <span class="text-[11px] bg-primary-bg text-primary px-2 py-1 rounded-full">脱出</span>
+        <span class="text-[11px] bg-primary-bg text-primary px-2 py-1 rounded-full">早期不痛</span>
+      </div>
+    </div>
+    <div class="bg-white rounded-[14px] p-[18px] flex flex-col gap-[10px]">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-[10px] bg-orange-bg flex items-center justify-center">
+          <span class="text-base font-semibold text-orange">②</span>
+        </div>
+        <h4 class="text-[17px] font-semibold text-text-dark">外痔</h4>
+      </div>
+      <p class="text-[13px] text-text-gray leading-5">发生在齿状线以下，表面覆盖皮肤。以疼痛和异物感为主要表现，可触及肛周皮赘或肿块。血栓性外痔疼痛剧烈。</p>
+      <div class="flex gap-2 flex-wrap">
+        <span class="text-[11px] bg-orange-bg text-orange px-2 py-1 rounded-full">疼痛</span>
+        <span class="text-[11px] bg-orange-bg text-orange px-2 py-1 rounded-full">异物感</span>
+        <span class="text-[11px] bg-orange-bg text-orange px-2 py-1 rounded-full">可触及</span>
+      </div>
+    </div>
+    <div class="bg-white rounded-[14px] p-[18px] flex flex-col gap-[10px]">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-[10px] bg-danger-bg flex items-center justify-center">
+          <span class="text-base font-semibold text-danger">③</span>
+        </div>
+        <h4 class="text-[17px] font-semibold text-text-dark">混合痔</h4>
+      </div>
+      <p class="text-[13px] text-text-gray leading-5">内痔和外痔同时存在，兼有两者的症状特点，是临床上最常见的痔疮类型，需要综合治疗，严重时需手术干预。</p>
+      <div class="flex gap-2 flex-wrap">
+        <span class="text-[11px] bg-danger-bg text-danger px-2 py-1 rounded-full">兼有两者</span>
+        <span class="text-[11px] bg-danger-bg text-danger px-2 py-1 rounded-full">最常见</span>
+        <span class="text-[11px] bg-danger-bg text-danger px-2 py-1 rounded-full">需综合治疗</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== Footer ==================== -->
+<footer class="bg-footer-dark flex flex-col items-center gap-[14px] px-6 pt-8 pb-8">
+  <span class="font-title text-[16px] font-bold text-white">痔疮大专家</span>
+  <span class="text-[12px] text-text-light">温和科普 科学护理 远离痔疮困扰</span>
+  <div class="w-full h-px bg-footer-border"></div>
+  <p class="text-[11px] text-text-gray text-center leading-[18px]">本站内容仅供参考 不构成医疗建议<br>如有健康问题请及时就医<br>© 2026 痔疮大专家</p>
+</footer>
+
+<!-- ==================== Bottom Navigation ==================== -->
+<nav class="bottom-nav" id="bottomNav">
+  <a class="bottom-nav-item active-nav" data-nav="selfCheck" onclick="navToSection('selfCheck', this)">
+    <span class="bn-icon">📋</span><span class="bn-label">自查</span>
+  </a>
+  <a class="bottom-nav-item" data-nav="aiConsult" onclick="navToSection('aiConsult', this)">
+    <span class="bn-icon">🤖</span><span class="bn-label">AI问诊</span>
+  </a>
+  <a class="bottom-nav-item" data-nav="knowledge" onclick="navToSection('knowledge', this)">
+    <span class="bn-icon">📚</span><span class="bn-label">知识库</span>
+  </a>
+  <a class="bottom-nav-item" data-nav="care" onclick="navToSection('care', this)">
+    <span class="bn-icon">🏠</span><span class="bn-label">护理</span>
+  </a>
+  <a class="bottom-nav-item" data-nav="quiz" onclick="navToSection('quiz', this)">
+    <span class="bn-icon">🎯</span><span class="bn-label">测验</span>
+  </a>
+</nav>
+
+<!-- ==================== Back to Top ==================== -->
+<div class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</div>
+
+</div>
+
+<!-- ==================== SCRIPTS ==================== -->
+<script>
+// ============ 自查模块 ============
+let selectedSymptoms = [];
+let currentStep = 1;
+let detailData = { duration: null, habit: null };
+
+function toggleSymptom(el) {
+  const symptom = el.dataset.symptom;
+  const checkBox = el.querySelector('.check-box');
+  const svg = checkBox.querySelector('svg');
+  if (el.classList.contains('selected')) {
+    el.classList.remove('selected');
+    checkBox.style.background = '#E8F1F6'; checkBox.style.border = '2px solid #CCFBF1';
+    svg.classList.add('hidden');
+    selectedSymptoms = selectedSymptoms.filter(s => s !== symptom);
+  } else {
+    el.classList.add('selected');
+    checkBox.style.background = '#0891B2'; checkBox.style.border = '2px solid #0891B2';
+    svg.classList.remove('hidden');
+    selectedSymptoms.push(symptom);
+  }
+}
+
+function toggleChip(el) {
+  const detail = el.dataset.detail;
+  const val = el.dataset.value;
+  const chips = document.querySelectorAll(`.detail-chip[data-detail="${detail}"]`);
+  if (el.classList.contains('selected-chip')) {
+    el.classList.remove('selected-chip');
+    el.style.background = '#F8FAFC'; el.style.color = '#64748B'; el.style.borderColor = 'transparent';
+    detailData[detail] = null;
+  } else {
+    chips.forEach(c => { c.classList.remove('selected-chip'); c.style.background = '#F8FAFC'; c.style.color = '#64748B'; c.style.borderColor = 'transparent'; });
+    el.classList.add('selected-chip');
+    el.style.background = '#0891B2'; el.style.color = '#fff'; el.style.borderColor = '#0891B2';
+    detailData[detail] = val;
+  }
+}
+
+function toggleAiChip(el) {
+  const chips = document.querySelectorAll('.ai-chip');
+  if (el.classList.contains('selected-chip')) {
+    el.classList.remove('selected-chip');
+    el.style.background = '#F8FAFC'; el.style.color = '#64748B'; el.style.borderColor = 'transparent';
+  } else {
+    chips.forEach(c => { c.classList.remove('selected-chip'); c.style.background = '#F8FAFC'; c.style.color = '#64748B'; c.style.borderColor = 'transparent'; });
+    el.classList.add('selected-chip');
+    el.style.background = '#0891B2'; el.style.color = '#fff'; el.style.borderColor = '#0891B2';
+  }
+}
+
+function nextStep() {
+  if (currentStep === 1) {
+    document.getElementById('step1').classList.add('hidden');
+    document.getElementById('step2').classList.remove('hidden');
+    document.getElementById('btnBack').classList.remove('hidden');
+    document.getElementById('btnNext').classList.add('hidden');
+    document.getElementById('btnAnalyze').classList.remove('hidden');
+    document.getElementById('stepBadge').textContent = '步骤 2/2';
+    document.getElementById('stepProgress').style.width = '100%';
+    currentStep = 2;
+  }
+  document.getElementById('selfCheck').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function prevStep() {
+  if (currentStep === 2) {
+    document.getElementById('step2').classList.add('hidden');
+    document.getElementById('step1').classList.remove('hidden');
+    document.getElementById('btnBack').classList.add('hidden');
+    document.getElementById('btnNext').classList.remove('hidden');
+    document.getElementById('btnAnalyze').classList.add('hidden');
+    document.getElementById('stepBadge').textContent = '步骤 1/2';
+    document.getElementById('stepProgress').style.width = '50%';
+    currentStep = 1;
+  }
+}
+
+function analyze() {
+  const result = document.getElementById('selfResult');
+  if (selectedSymptoms.length === 0) {
+    result.innerHTML = '<p class="text-[13px] text-text-light leading-5">请先选择至少一个症状</p>';
+    result.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+  let severityScore = 0;
+  document.querySelectorAll('.symptom-card.selected').forEach(card => { severityScore += parseInt(card.dataset.severity || 0); });
+  if (detailData.duration === 'month') severityScore += 2;
+  if (detailData.duration === 'long') severityScore += 3;
+  if (detailData.habit === 'sit') severityScore += 1;
+  if (detailData.habit === 'spicy') severityScore += 1;
+
+  let level, color, advice, detailAdvice;
+  if (severityScore >= 6) {
+    level = '中重度 ⚠️'; color = 'text-danger';
+    advice = '您的症状组合较为复杂，建议尽快预约肛肠科就诊评估，不要拖延。';
+    detailAdvice = '请特别关注下方"风险预警"板块中的危险信号。建议2周内就诊。';
+  } else if (severityScore >= 3) {
+    level = '中度 📋'; color = 'text-orange';
+    advice = '症状需要积极护理干预。建议严格执行居家护理方案，观察2周变化。';
+    detailAdvice = '如症状持续2周未缓解或加重，请及时就医。';
+  } else {
+    level = '轻度 ✅'; color = 'text-success';
+    advice = '目前症状较轻，居家护理和生活方式调整即可。保持良好习惯预防复发。';
+    detailAdvice = '建议每日坚持打卡护理，1个月后评估改善情况。';
+  }
+
+  result.innerHTML = `<div class="fade-in text-left w-full">
+    <div class="flex items-center gap-2 mb-3"><span class="text-2xl">📊</span><p class="text-[16px] font-bold text-text-dark">评估结果：<span class="${color}">${level}</span></p></div>
+    <p class="text-[13px] text-text-gray leading-5 mb-2">${advice}</p>
+    <p class="text-[12px] text-text-light leading-4">${detailAdvice}</p>
+    <div class="mt-3 pt-3 border-t border-primary-badge">
+      <p class="text-[11px] text-text-light">已选症状：${selectedSymptoms.join('、') || '无'} | 持续：${detailData.duration || '未选'} | 习惯：${detailData.habit || '未选'}</p>
+    </div></div>`;
+  result.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+// ============ AI问诊（增强版）============
+function aiConsult() {
+  const input = document.getElementById('aiInput').value.trim();
+  const age = document.getElementById('aiAge').value;
+  const aiChip = document.querySelector('.ai-chip.selected-chip');
+  const specialStatus = aiChip ? aiChip.dataset.ai : '';
+  const result = document.getElementById('aiResult');
+
+  if (!input && !age) {
+    result.classList.remove('hidden');
+    result.innerHTML = '<div class="fade-in"><p class="text-[13px] text-text-light">请至少填写年龄或描述您的情况</p></div>';
+    return;
+  }
+
+  let plan = '';
+  let warnings = '';
+
+  if (specialStatus === 'postpartum' || specialStatus === 'pregnant') {
+    plan = '<li>产后/孕期用药需格外谨慎，必须在产科和肛肠科医生共同指导下用药</li><li>优先采用温水坐浴和饮食调理等非药物手段</li><li>产后42天复查时请同步进行肛肠检查</li><li>哺乳期避免使用含麝香等成分的外用药</li>';
+    warnings = '产后/孕期特殊人群，任何用药请务必咨询医生';
+  } else if (age && parseInt(age) >= 46) {
+    plan = '<li>建议进行肠镜检查排除其他肠道疾病</li><li>如长期便秘需排查肠道功能减退</li><li>温和运动如太极、散步，避免剧烈运动</li><li>注意盆底肌锻炼，预防脱垂加重</li>';
+    warnings = '中老年患者建议定期肠镜筛查';
+  } else {
+    plan = '<li>每日温水坐浴1-2次，每次10-15分钟</li><li>增加膳食纤维摄入，每日饮水不少于2L</li><li>避免久坐，每45分钟起身活动3-5分钟</li><li>如厕时间控制在5分钟内，不要在厕所看手机</li><li>便后用温水清洗代替干擦</li>';
+    warnings = '症状持续超过2周请及时就医';
+  }
+
+  result.classList.remove('hidden');
+  result.innerHTML = `<div class="fade-in">
+    <div class="flex items-center gap-2 mb-3"><span class="text-xl">🤖</span><p class="text-[15px] font-semibold text-text-dark">你的专属护理方案</p></div>
+    ${age ? '<p class="text-[12px] text-text-light mb-2">年龄：' + age + (specialStatus ? ' | 状态：' + (specialStatus === 'postpartum' ? '产后' : specialStatus === 'pregnant' ? '孕期' : '无特殊') : '') + '</p>' : ''}
+    <ul class="text-[13px] text-text-gray leading-5 list-disc pl-4 space-y-2 mb-3">${plan}</ul>
+    ${input ? '<div class="bg-primary-bg rounded-xl p-3 mb-3"><p class="text-[12px] text-text-dark font-medium">📝 针对你的补充建议</p><p class="text-[12px] text-text-gray leading-4 mt-1">根据你的描述，建议重点关注日常习惯调整。痔疮是慢性病，坚持护理比单次治疗更重要。</p></div>' : ''}
+    <div class="bg-orange-bg/50 rounded-xl p-3"><p class="text-[12px] text-orange font-medium">⚠️ ${warnings}</p></div>
+    <p class="text-[11px] text-text-light mt-2">本方案仅供参考，不替代专业医疗建议</p></div>`;
+  result.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+// ============ 人群知识库 Tab ============
+const tabData = {
+  office: {
+    title: '为什么久坐容易诱发痔疮？',
+    body: '长时间保持坐姿会导致肛门周围静脉回流不畅，局部充血水肿。建议每45分钟起身活动3-5分钟，改善局部血液循环。',
+    tip: '每天喝够8杯水，多吃膳食纤维，远离久坐陷阱',
+    steps: ['设置45分钟站立提醒，利用接水/上厕所间隙活动', '办公椅加透气坐垫，减轻肛周压迫', '午餐选择高纤维食物，自带便当多加蔬菜']
+  },
+  postpartum: {
+    title: '产后为什么容易得痔疮？',
+    body: '孕期子宫压迫盆腔静脉，分娩时用力过度，加上产后便秘高发，都是诱因。建议产后尽早下床活动，配合温水坐浴。',
+    tip: '产后42天复查时同步检查，哺乳期用药需遵医嘱',
+    steps: ['产后尽早下床轻度活动，促进血液循环', '每天温水坐浴，缓解局部充血', '多吃火龙果、西梅等通便水果，预防产后便秘']
+  },
+  elderly: {
+    title: '中老年人如何预防痔疮反复？',
+    body: '随着年龄增长，盆底肌松弛，加上慢性便秘和长期用药，是中老年高发原因。建议适量运动，避免用力排便。',
+    tip: '老年患者需警惕直肠脱垂，如有异常及时就医',
+    steps: ['每天进行提肛运动，每次10-15下，一天3组', '保持大便通畅，便秘时可使用乳果糖等温和通便药', '定期体检，关注排便习惯变化']
+  }
+};
+
+function switchTab(btn, type) {
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    b.classList.remove('active', 'bg-primary', 'text-white', 'font-semibold');
+    b.classList.add('text-text-gray', 'font-medium');
+  });
+  btn.classList.add('active', 'bg-primary', 'text-white', 'font-semibold');
+  btn.classList.remove('text-text-gray', 'font-medium');
+
+  const d = tabData[type];
+  const content = document.getElementById('tabContent');
+  content.classList.add('fade-in');
+  const stepsHtml = d.steps.map((s, i) =>
+    `<div class="flex items-start gap-2"><span class="text-primary font-bold text-sm flex-shrink-0">${i+1}.</span><span class="text-[12px] text-text-gray">${s}</span></div>`
+  ).join('');
+  content.innerHTML = `
+    <h4 class="text-[16px] font-semibold text-text-dark leading-6">${d.title}</h4>
+    <p class="text-[13px] text-text-gray leading-[22px]">${d.body}</p>
+    <div class="flex items-center gap-2 bg-primary-bg rounded-[10px] px-[14px] py-3">
+      <span class="text-sm">💡</span>
+      <span class="text-[12px] font-medium text-primary leading-[18px]">${d.tip}</span>
+    </div>
+    <div class="flex flex-col gap-2 mt-1">
+      <span class="text-[13px] font-semibold text-text-dark">📌 三步行动方案</span>
+      ${stepsHtml}
+    </div>`;
+}
+
+// ============ 互动解剖图 ============
+const anatomyInfo = {
+  internal: { title: '内痔 · 最常见类型', text: '内痔位于肛门齿状线以上，表面被覆黏膜。主要症状为无痛性便血（鲜红色、滴血或喷射状）和痔核脱出。根据脱出程度分为I-IV度：I度不脱出，II度脱出可自行回纳，III度需手推回纳，IV度无法回纳。早期内痔往往无明显疼痛感，容易被忽视。', tips: '💡 早期干预效果最好，出现便血症状请及时自查评估' },
+  external: { title: '外痔 · 以疼痛为主', text: '外痔位于齿状线以下，表面覆盖皮肤。主要症状为肛门不适、潮湿不洁、瘙痒、疼痛及异物感。血栓性外痔疼痛剧烈，可触及肛周硬结。外痔通常不会引起大出血，但疼痛和异物感会严重影响生活质量。', tips: '💡 外痔患者注意保持肛周清洁干燥，避免搔抓' },
+  mixed: { title: '混合痔 · 临床最常见', text: '混合痔是内痔和外痔同时存在的情况，跨齿状线分布，兼有两种类型的症状特点。临床上最为常见，表现为出血、脱出、疼痛等多种症状并存。治疗需要综合考虑，轻度可保守治疗，中重度常需手术干预。', tips: '💡 混合痔需综合治疗，单一手段往往效果不佳' }
+};
+
+function showAnatomy(type) {
+  document.querySelectorAll('.anatomy-zone').forEach(z => z.classList.remove('active'));
+  document.getElementById('zone' + type.charAt(0).toUpperCase() + type.slice(1)).classList.add('active');
+
+  const info = anatomyInfo[type];
+  const detail = document.getElementById('anatomyDetail');
+  const detailText = document.getElementById('anatomyDetailText');
+  detail.classList.remove('hidden');
+  detail.classList.add('fade-in');
+  detailText.innerHTML = `<span class="text-[15px] font-semibold text-text-dark block mb-2">${info.title}</span>${info.text}<br><span class="text-[12px] text-primary font-medium block mt-2">${info.tips}</span>`;
+}
+
+// ============ 护理卡片展开 ============
+function toggleCare(el) {
+  const detail = el.nextElementSibling;
+  const arrow = el.querySelector('.caret-arrow');
+  if (detail.classList.contains('open')) {
+    detail.classList.remove('open');
+    arrow.style.transform = 'rotate(0deg)';
+  } else {
+    detail.classList.add('open');
+    arrow.style.transform = 'rotate(90deg)';
+  }
+}
+
+// ============ 坐浴计时器 ============
+let timerInterval = null;
+let timerSeconds = 600; // 10 minutes
+let timerRunning = false;
+
+function updateTimerDisplay() {
+  const m = Math.floor(timerSeconds / 60);
+  const s = timerSeconds % 60;
+  document.getElementById('timerDisplay').textContent = `${m}:${s.toString().padStart(2, '0')}`;
+}
+
+function startTimer() {
+  if (timerRunning) return;
+  timerRunning = true;
+  document.getElementById('timerBtn').textContent = '计时中…';
+  document.getElementById('timerBtn').style.background = '#94A3B8';
+  timerInterval = setInterval(() => {
+    if (timerSeconds > 0) {
+      timerSeconds--;
+      updateTimerDisplay();
+    }
+    if (timerSeconds === 0) {
+      clearInterval(timerInterval);
+      timerRunning = false;
+      document.getElementById('timerBtn').textContent = '✅ 完成!';
+      document.getElementById('timerBtn').style.background = '#16A34A';
+      setTimeout(() => {
+        document.getElementById('timerBtn').textContent = '开始计时';
+        document.getElementById('timerBtn').style.background = '#0891B2';
+      }, 3000);
+    }
+  }, 1000);
+}
+
+function resetTimer() {
+  clearInterval(timerInterval);
+  timerRunning = false;
+  timerSeconds = 600;
+  updateTimerDisplay();
+  document.getElementById('timerBtn').textContent = '开始计时';
+  document.getElementById('timerBtn').style.background = '#0891B2';
+}
+
+// ============ 每日打卡 ============
+function loadChecks() {
+  try {
+    const checks = JSON.parse(localStorage.getItem('hemcheck') || '{}');
+    const today = new Date().toDateString();
+    if (checks.date !== today) {
+      localStorage.setItem('hemcheck', JSON.stringify({ date: today, items: {} }));
+      return {};
+    }
+    return checks.items || {};
+  } catch(e) { return {}; }
+}
+
+function saveChecks(items) {
+  localStorage.setItem('hemcheck', JSON.stringify({ date: new Date().toDateString(), items }));
+}
+
+function toggleCheck(el) {
+  const key = el.dataset.key;
+  const circle = el.querySelector('.check-circle');
+  const svg = circle.querySelector('svg');
+  const items = loadChecks();
+
+  if (svg.classList.contains('hidden')) {
+    svg.classList.remove('hidden');
+    circle.style.background = '#16A34A'; circle.style.borderColor = '#16A34A';
+    items[key] = true;
+  } else {
+    svg.classList.add('hidden');
+    circle.style.background = 'transparent'; circle.style.borderColor = '#CCFBF1';
+    delete items[key];
+  }
+  saveChecks(items);
+  updateCheckProgress();
+}
+
+function updateCheckProgress() {
+  const items = loadChecks();
+  const total = 5;
+  const done = Object.keys(items).length;
+  document.getElementById('checkProgress').textContent = `${done}/${total}`;
+  document.getElementById('checkBar').style.width = `${(done/total)*100}%`;
+
+  const msgs = ['从今天开始，每完成一项都是进步 💪', '好的开始！继续加油 🌱', '已经过半，你很棒！🌟', '快要完成啦，坚持住！🔥', '太厉害了！全部完成！🎉'];
+  document.getElementById('checkEncourage').textContent = msgs[Math.min(done, 4)];
+}
+
+function initChecks() {
+  const items = loadChecks();
+  document.querySelectorAll('#checklist [data-key]').forEach(el => {
+    const key = el.dataset.key;
+    if (items[key]) {
+      const circle = el.querySelector('.check-circle');
+      const svg = circle.querySelector('svg');
+      svg.classList.remove('hidden');
+      circle.style.background = '#16A34A'; circle.style.borderColor = '#16A34A';
+    }
+  });
+  updateCheckProgress();
+}
+
+// ============ 趣味测验 ============
+const quizQuestions = [
+  { q: '痔疮本质上是什么结构？', options: ['肿瘤', '静脉曲张团', '细菌感染', '皮肤增生'], answer: 1, explain: '痔疮是肛垫和静脉丛的病理性肥大、移位，本质上是血管组织的病变，不是肿瘤。' },
+  { q: '以下哪项最容易诱发痔疮？', options: ['多喝水', '长期久坐', '多吃水果', '规律运动'], answer: 1, explain: '长期久坐会导致盆腔静脉回流受阻，是痔疮最常见的诱因之一。每45分钟应起身活动。' },
+  { q: '痔疮患者建议每次排便不超过几分钟？', options: ['3分钟', '5分钟', '10分钟', '15分钟'], answer: 1, explain: '每次排便应控制在5分钟以内，避免久蹲导致肛周静脉压力过大。不要在厕所看手机！' },
+  { q: '温水坐浴的推荐水温是多少？', options: ['30°C', '35°C', '40°C', '50°C'], answer: 2, explain: '40°C左右最适宜，以手腕内侧试温不烫为准。过热会烫伤，过凉效果不佳。' },
+  { q: '以下哪种情况需要立即就医？', options: ['偶尔便血', '轻微异物感', '喷射状大量出血', '排便后轻微不适'], answer: 2, explain: '大量出血呈喷射状是危险信号，需立即前往医院。偶尔少量便血可先自查评估。' }
+];
+
+let quizIndex = 0, quizScore = 0, quizAnswered = false;
+
+function loadQuiz() {
+  if (quizIndex >= quizQuestions.length) {
+    showQuizResult();
+    return;
+  }
+  quizAnswered = false;
+  const q = quizQuestions[quizIndex];
+  document.getElementById('qNum').textContent = quizIndex + 1;
+  document.getElementById('quizScore').textContent = quizScore;
+  document.getElementById('qText').textContent = q.q;
+  document.getElementById('quizNext').classList.add('hidden');
+  const optDiv = document.getElementById('qOptions');
+  optDiv.innerHTML = q.options.map((o, i) =>
+    `<div class="quiz-option bg-white border border-primary-badge rounded-xl p-3 text-[13px] text-text-dark" onclick="answerQuiz(this, ${i})">${o}</div>`
+  ).join('');
+}
+
+function answerQuiz(el, idx) {
+  if (quizAnswered) return;
+  quizAnswered = true;
+  const q = quizQuestions[quizIndex];
+  const options = document.querySelectorAll('.quiz-option');
+  options.forEach(o => o.style.pointerEvents = 'none');
+
+  if (idx === q.answer) {
+    el.classList.add('correct');
+    quizScore++;
+    document.getElementById('quizScore').textContent = quizScore;
+  } else {
+    el.classList.add('wrong');
+    options[q.answer].classList.add('correct');
+  }
+
+  // Show explanation
+  const explainDiv = document.createElement('div');
+  explainDiv.className = 'text-[12px] text-text-gray bg-primary-bg rounded-xl p-3 mt-2 leading-5 fade-in';
+  explainDiv.textContent = q.explain;
+  document.getElementById('qOptions').appendChild(explainDiv);
+
+  document.getElementById('quizNext').classList.remove('hidden');
+  document.getElementById('quizNext').scrollIntoView({ behavior: 'smooth' });
+}
+
+function nextQuiz() {
+  quizIndex++;
+  loadQuiz();
+  document.getElementById('quizContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function showQuizResult() {
+  document.getElementById('quizQuestion').classList.add('hidden');
+  document.getElementById('quizNext').classList.add('hidden');
+  const result = document.getElementById('quizResult');
+  result.classList.remove('hidden');
+  const emojiEl = document.getElementById('quizEmoji');
+  const titleEl = document.getElementById('quizResultTitle');
+  const descEl = document.getElementById('quizResultDesc');
+
+  if (quizScore === 5) {
+    emojiEl.textContent = '🏆'; titleEl.textContent = '满分！你是痔疮知识达人！'; descEl.textContent = '你对痔疮的了解非常全面，继续保持健康意识！';
+  } else if (quizScore >= 3) {
+    emojiEl.textContent = '👍'; titleEl.textContent = '不错哦，基础知识过关！'; descEl.textContent = `答对了 ${quizScore}/5 题。还有提升空间，多看看科普内容吧。`;
+  } else {
+    emojiEl.textContent = '📚'; titleEl.textContent = '还需要多学习哦'; descEl.textContent = `答对了 ${quizScore}/5 题。别担心，向上翻阅科普内容，了解更多痔疮知识。`;
+  }
+}
+
+function resetQuiz() {
+  quizIndex = 0; quizScore = 0; quizAnswered = false;
+  document.getElementById('quizScore').textContent = '0';
+  document.getElementById('quizQuestion').classList.remove('hidden');
+  document.getElementById('quizResult').classList.add('hidden');
+  loadQuiz();
+}
+
+// ============ 症状日记 ============
+function selectEmoji(el, level) {
+  document.querySelectorAll('.emoji-btn').forEach(e => e.classList.remove('selected-emoji'));
+  el.classList.add('selected-emoji');
+  el.dataset.active = 'true';
+}
+
+function saveDiary() {
+  const activeEmoji = document.querySelector('.emoji-btn.selected-emoji');
+  const note = document.getElementById('diaryNote').value.trim();
+  if (!activeEmoji) { alert('请选择一个表情来表达今天的不适程度'); return; }
+
+  const level = activeEmoji.dataset.level;
+  const levelEmojis = ['', '😊', '😐', '😣', '😫', '😭'];
+  const levelLabels = ['', '轻松', '轻微', '中等', '较重', '严重'];
+
+  const entries = JSON.parse(localStorage.getItem('hemdiary') || '[]');
+  const now = new Date();
+  const dateStr = `${now.getMonth()+1}/${now.getDate()} ${now.getHours()}:${now.getMinutes().toString().padStart(2,'0')}`;
+  entries.unshift({ date: dateStr, level: parseInt(level), note, emoji: levelEmojis[level], label: levelLabels[level] });
+  if (entries.length > 20) entries.pop();
+  localStorage.setItem('hemdiary', JSON.stringify(entries));
+
+  document.getElementById('diaryNote').value = '';
+  document.querySelectorAll('.emoji-btn').forEach(e => e.classList.remove('selected-emoji'));
+  renderDiary();
+}
+
+function renderDiary() {
+  const entries = JSON.parse(localStorage.getItem('hemdiary') || '[]');
+  const container = document.getElementById('diaryEntries');
+  if (entries.length === 0) {
+    container.innerHTML = '<p class="text-[12px] text-text-light text-center py-4">还没有记录，从今天开始吧 ✍️</p>';
+    return;
+  }
+  container.innerHTML = entries.map(e =>
+    `<div class="flex items-center gap-3 bg-card-bg rounded-xl p-3">
+      <span class="text-xl">${e.emoji}</span>
+      <div class="flex-1"><span class="text-[13px] text-text-dark font-medium">${e.label}</span><span class="text-[11px] text-text-light ml-2">${e.date}</span>${e.note ? '<p class="text-[11px] text-text-light leading-4">' + e.note + '</p>' : ''}</div>
+    </div>`
+  ).join('');
+}
+
+// ============ Smooth scroll for nav ============
+document.querySelectorAll('header a[href]').forEach(a => {
+  a.addEventListener('click', function(e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) target.scrollIntoView({ behavior: 'smooth' });
+  });
+});
+
+// Hero CTA
+document.querySelector('a[href="#selfCheck"]')?.addEventListener('click', function(e) {
+  e.preventDefault();
+  document.getElementById('selfCheck')?.scrollIntoView({ behavior: 'smooth' });
+});
+
+// ============ Bottom Navigation ============
+function navToSection(id, el) {
+  document.querySelectorAll('.bottom-nav-item').forEach(i => i.classList.remove('active-nav'));
+  el.classList.add('active-nav');
+  const target = document.getElementById(id);
+  if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ============ Scroll detection for bottom nav & back to top ============
+function updateNavOnScroll() {
+  const sections = [
+    { id: 'selfCheck', nav: 'selfCheck' },
+    { id: 'aiConsult', nav: 'aiConsult' },
+    { id: 'knowledge', nav: 'knowledge' },
+    { id: 'care', nav: 'care' },
+    { id: 'quiz', nav: 'quiz' }
+  ];
+  const scrollY = window.scrollY + 200; // offset for sticky header
+
+  // Update active nav item
+  let activeNav = 'selfCheck';
+  sections.forEach(s => {
+    const el = document.getElementById(s.id);
+    if (el && el.offsetTop <= scrollY) activeNav = s.nav;
+  });
+  document.querySelectorAll('.bottom-nav-item').forEach(i => {
+    i.classList.toggle('active-nav', i.dataset.nav === activeNav);
+  });
+
+  // Show/hide back to top
+  const btn = document.getElementById('backToTop');
+  if (window.scrollY > 500) {
+    btn.classList.add('visible');
+  } else {
+    btn.classList.remove('visible');
+  }
+}
+
+window.addEventListener('scroll', updateNavOnScroll, { passive: true });
+
+// ============ Init ============
+window.addEventListener('DOMContentLoaded', () => {
+  initChecks();
+  renderDiary();
+  loadQuiz();
+});
+</script>
+</body>
+</html>
